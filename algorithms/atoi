@@ -1,0 +1,51 @@
+class Solution {
+public:
+    int myAtoi(string str) {
+        enum elem{SPACE,DIGIT,SYMBOL,INVALID};
+        int states[][4] = {{1,2,3,-1},{1,2,3,-1},{4,2,-1,-1},{-1,2,-1,-1},{4,-1,-1,-1}};
+        int flag = 1;
+        int i = 0, j = 0, count = 0;
+        long result = 0;
+        int state = 0;
+        for(; i < str.length(); i++)
+        {
+            if(str[i] == ' ')
+                state = states[state][SPACE];
+            else if(str[i] >= '0' && str[i] <= '9')
+            {
+                if(state == 0 || state == 1)
+                    j = i;
+                state = states[state][DIGIT];
+                count++;
+            }
+            else if(str[i] == '-' || str[i] == '+')
+            {
+                if(state == 0 || state == 1)
+                    j = i+1;
+                state = states[state][SYMBOL];
+                if(str[i] == '-')
+                    flag = -1;
+            }
+            else
+                state = states[state][INVALID];
+            if(state == -1)
+                break;
+        }
+        if(count > 11)
+        {
+            if(flag == -1) return -2147483648;
+            else return 2147483647;
+        }
+        for(; j < i; j++)
+        {
+            if(str[j] >= '0' && str[j] <= '9')
+            {
+                result = result*10 + str[j] - '0';
+            }
+        }
+        result = flag*result;
+        if(result > 2147483647) return 2147483647;
+        if(result < -2147483648) return -2147483648;
+        return result;
+    }
+};
